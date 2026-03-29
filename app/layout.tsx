@@ -31,7 +31,7 @@ export default function RootLayout({
       className={cn("antialiased", fontMono.variable, "font-sans", fontSans.variable)}
     >
       <body>
-        <ThemeProvider>
+        <ThemeProvider forcedTheme="light" enableSystem={false}>
           <SidebarProvider defaultOpen={false}>
             <TooltipProvider>
               <AppSidebar />
