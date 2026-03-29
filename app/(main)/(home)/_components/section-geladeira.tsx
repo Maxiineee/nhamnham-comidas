@@ -1,4 +1,3 @@
-import { Separator } from "@/components/ui/separator"
 import { Toggle } from "@/components/ui/toggle"
 
 const ingredientsList = [{ txt: "Macarrão" },
