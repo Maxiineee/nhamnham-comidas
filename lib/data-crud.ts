@@ -5,12 +5,11 @@ import { CardReceitaData } from "@/components/card-receita";
 import { auth } from "@/lib/auth"
 import { headers } from "next/headers";
 
-const session = await auth.api.getSession(
-    { headers: await headers() }
-)
-const userId = session?.user?.id ?? null;
-
 export async function getDestaques(category?: string): Promise<CardReceitaData[]> {
+    const session = await auth.api.getSession(
+        { headers: await headers() }
+    )
+    const userId = session?.user?.id ?? null;
     const dataAtual = new Date();
     const primeiroDiaDoMes = new Date(dataAtual.getFullYear(), dataAtual.getMonth(), 1);
 
@@ -184,6 +183,10 @@ export async function getDestaques(category?: string): Promise<CardReceitaData[]
 }
 
 export async function searchRecipesByIngredients(ingredients: string[], page: number = 1): Promise<CardReceitaData[]> {
+    const session = await auth.api.getSession(
+        { headers: await headers() }
+    )
+    const userId = session?.user?.id ?? null;
     const recipes = await prisma.recipe.findMany({
         where: {
             ingredients: {
@@ -273,6 +276,10 @@ type recipeFiltersType = {
 }
 
 export async function searchRecipes(query: string, page: number = 1, filters?: recipeFiltersType): Promise<CardReceitaData[]> {
+    const session = await auth.api.getSession(
+        { headers: await headers() }
+    )
+    const userId = session?.user?.id ?? null;
     query = query.trim();
     if (query.length === 0) return [];
 
