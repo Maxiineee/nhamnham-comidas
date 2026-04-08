@@ -1,11 +1,7 @@
-"use client";
-
-import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Logo from "@/components/logo";
 import LogoHorizontal from "@/components/logo-horizontal";
-import Link from "next/link";
-import { cn } from "@/lib/utils";
+import ButtonLink from "@/components/button-link";
 
 export default function SectionCTA({ className }: { className?: string }) {
     return (
@@ -20,8 +16,8 @@ export default function SectionCTA({ className }: { className?: string }) {
                     <p className="text-sm text-muted-foreground hidden sm:block line-clamp-3">(Não se preocupe, você ainda pode navegar sem criar uma conta)</p>
                 </div>
                 <div className="flex flex-col text-center flex-1 gap-3">
-                    <Link href="/registrar" className={cn(buttonVariants({ className: "sm:flex-1" }))}>Registrar</Link>
-                    <Link href="/entrar" className={cn(buttonVariants({ variant: "outline", className: "flex-1 hidden sm:flex" }))}>Entrar</Link>
+                    <ButtonLink href="/registrar" className="sm:flex-1" >Registrar</ButtonLink>
+                    <ButtonLink href="/entrar" className="flex-1 hidden sm:flex" variant="outline">Entrar</ButtonLink>
                 </div>
             </CardContent>
         </Card>

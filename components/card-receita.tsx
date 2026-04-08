@@ -3,26 +3,14 @@ import { Badge } from "./ui/badge";
 import { Card, CardContent, CardHeader } from "./ui/card";
 import ResumoPerfil from "./resumo-perfil";
 import { cn } from "@/lib/utils";
-
-//valores de teste
-const data = {
-    imgUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcStU2cPTGS16xFrrzMvAodxLizI1fn__FRO633e0PJUBUUQdBsBkKcHX6loMOzuQ8ZKbfeZZATex8tWwpyWBKqbsAyWZ2DTFd-cMRocxozN&s=10",
-    média: 4.5,
-    titulo: "pizza de strogonoff de frango",
-    perfilId: "a41-3a451-as312",
-    categorias: ['Salgado', 'Prato Principal', 'Jantar', 'teste', 'teste', 'teste'],
-    liked: true,
-    saved: false,
-    authorId: "aabb-32aa-32bf-c43s"
-}
+import Link from "next/link";
 
 const iconClasses = {
     default: "size-8 text-background",
     active: "size-8 text-primary"
 }
 
-function BadgesCategorias() {
-    const categorias = data.categorias.slice(0, 3)
+function BadgesCategorias({ categorias }: { categorias: string[] }) {
     return (
         categorias.map((item, index) => (
             <Badge variant="outline" key={index}>{item}</Badge>
@@ -30,37 +18,54 @@ function BadgesCategorias() {
     )
 }
 
-function CardActions() {
+function CardActions({ liked, saved, media }: { liked?: boolean, saved?: boolean, media: number }) {
     return (
         <div className="flex gap-4">
             <div className="flex items-center gap-2">
-                <IconStarFilled className={data.liked ? iconClasses.active : iconClasses.default} />
-                <p className="text-base font-bold text-background">{data.média}</p>
+                <IconStarFilled className={liked ? iconClasses.active : iconClasses.default} />
+                <p className="text-base font-bold text-background">{media}</p>
             </div>
-            <IconBookmarkFilled className={data.saved ? iconClasses.active : iconClasses.default} />
+            <IconBookmarkFilled className={saved ? iconClasses.active : iconClasses.default} />
         </div>
     )
 }
 
-export default function CardReceita({ id, className }: { id: string, className?: string }) {
+export type CardReceitaData = {
+    id: string;
+    imgUrl: string;
+    media: number;
+    titulo: string;
+    categorias: string[];
+    avaliado: boolean;
+    salvo: boolean;
+    author: {
+        id: string;
+        name: string;
+        imgUrl: string;
+    };
+}
+
+export default function CardReceita({ data, className }: { data: CardReceitaData, className?: string }) {
     return (
-        <Card className={cn("flex flex-col justify-between p-3 sm:p-4", className)}
-            style={data.imgUrl ? {
-                backgroundImage: `url(${data.imgUrl})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center'
-            } : undefined}
-        >
-            <CardHeader className="flex gap-2 p-0">
-                <BadgesCategorias />
-            </CardHeader>
-            <CardContent className="p-0">
-                <h2 className="w-1/2 text-xl sm:text-2xl font-bold text-background">{data.titulo}</h2>
-                <div className="flex w-full justify-between">
-                    <CardActions />
-                    <ResumoPerfil userId={data.authorId} />
-                </div>
-            </CardContent>
-        </Card>
+
+            <Card className={cn("flex flex-col justify-between p-3 sm:p-4", className)}
+                style={{
+                    backgroundImage: `url(${data.imgUrl})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center'
+                }}
+            >
+                <CardHeader className="flex gap-2 p-0">
+                    <BadgesCategorias categorias={data.categorias} />
+                </CardHeader>
+                <CardContent className="p-0">
+                    <h2 className="w-1/2 text-xl sm:text-2xl font-bold text-background">{data.titulo}</h2>
+                    <div className="flex w-full justify-between">
+                        <CardActions liked={data.avaliado} saved={data.salvo} media={data.media} />
+                        <ResumoPerfil userId={data.author.id} username={data.author.name} imgUrl={data.author.imgUrl} />
+                    </div>
+                </CardContent>
+            </Card>
+
     )
 }

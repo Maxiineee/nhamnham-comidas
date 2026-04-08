@@ -5,6 +5,8 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { cn } from "@/lib/utils";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers"
 
 import AppSidebar from "@/components/app-sidebar"
 
@@ -19,11 +21,14 @@ const fontMono = Geist_Mono({
   variable: "--font-mono",
 })
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const session = await auth.api.getSession({
+    headers: await headers() // Pass the request headers to getSession
+  })
   return (
     <html
       lang="en"
@@ -34,7 +39,7 @@ export default function RootLayout({
         <ThemeProvider forcedTheme="light" enableSystem={false}>
           <SidebarProvider>
             <TooltipProvider>
-              <AppSidebar />
+              <AppSidebar session={session} />
               <main className="w-full">
                 {children}
               </main>

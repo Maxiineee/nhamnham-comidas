@@ -1,11 +1,15 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import prisma from "@/lib/prisma";
+import { nextCookies } from 'better-auth/next-js';
 
 export const auth = betterAuth({
     database: prismaAdapter(prisma, {
         provider: "postgresql",
     }),
+    baseURL: process.env.BETTER_AUTH_URL!,
+    basePath: "/api/auth",
+    trustedOrigins: [process.env.BETTER_AUTH_URL!],
     emailAndPassword: {
         enabled: true,
         requireEmailVerification: false,
@@ -19,11 +23,6 @@ export const auth = betterAuth({
     },
     user: {
         additionalFields: {
-            username: {
-                type: "string",
-                required: true,
-                input: true,
-            },
             bio: {
                 type: "string",
                 required: false,
@@ -42,5 +41,6 @@ export const auth = betterAuth({
                 input: false,
             }
         }
-    }
+    },
+    plugins: [nextCookies()]
 });

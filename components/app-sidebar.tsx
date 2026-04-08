@@ -14,7 +14,7 @@ import {
     SidebarMenuItem,
 } from "./ui/sidebar"
 
-export default function AppSidebar({ className }: { className?: string }) {
+export default function AppSidebar({ className, session }: { className?: string, session: any }) {
     const currentPath = usePathname()
 
     return (
@@ -25,6 +25,10 @@ export default function AppSidebar({ className }: { className?: string }) {
                     <SidebarMenu>
                         {navItems.map((item) => {
                             const isActive = item.isActive(currentPath)
+
+                            if (item.label === "Perfil" && !session?.user) {
+                                return null
+                            }
 
                             return (
                                 <SidebarMenuItem key={item.href}>

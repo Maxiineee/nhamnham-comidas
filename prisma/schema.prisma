@@ -3,6 +3,7 @@
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
+  previewFeatures = ["fullTextSearchPostgres"]
 }
 
 datasource db {
@@ -20,6 +21,7 @@ model Recipe {
   authorId        String
   createdAt       DateTime                 @default(now())
   updatedAt       DateTime                 @updatedAt
+  ratingAvg       Float                    @default(0)
   steps           Step[]
   ingredients     RecipeIngredient[]
   reviews         Review[]
@@ -151,7 +153,6 @@ model RecipeCategory {
 model User {
   id              String                   @id
   name            String
-  username        String                   @unique
   bio             String?
   email           String
   emailVerified   Boolean
