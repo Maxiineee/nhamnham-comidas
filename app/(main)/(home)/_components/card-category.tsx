@@ -9,7 +9,7 @@ type CardCategoryVariant = "Main" | "Desserts" | "Drinks" | "Snacks"
 
 export default function CardCategory({ variant }: { variant: CardCategoryVariant }) {
     let title, img, path
-    // Paths com valores de teste
+    // Test values for path
     switch (variant) {
         case "Main":
             title = "Main Dishes"

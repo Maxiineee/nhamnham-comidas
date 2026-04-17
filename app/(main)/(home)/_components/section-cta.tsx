@@ -16,8 +16,8 @@ export default function SectionCTA({ className }: { className?: string }) {
                     <p className="text-sm text-muted-foreground hidden sm:block line-clamp-3">Dont worry, you can still browse without an account</p>
                 </div>
                 <div className="flex flex-col text-center flex-1 gap-3">
-                    <ButtonLink href="/signup" className="sm:flex-1" >Signup</ButtonLink>
-                    <ButtonLink href="/login" className="flex-1 hidden sm:flex" variant="outline">Login</ButtonLink>
+                    <ButtonLink href="/signup" className="sm:flex-1" >Sign up</ButtonLink>
+                    <ButtonLink href="/signin" className="flex-1 hidden sm:flex" variant="outline">Sign in</ButtonLink>
                 </div>
             </CardContent>
         </Card>

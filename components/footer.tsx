@@ -18,7 +18,7 @@ export default function Footer({ className }: { className: string }) {
     const currentPath = usePathname()
 
     return (
-        <footer className={cn("fixed bottom-0 left-0 grid w-full grid-cols-5 place-items-center overflow-visible bg-background h-18", className)}>
+        <footer className={cn("fixed bottom-0 left-0 grid w-full grid-cols-5 place-items-center overflow-visible bg-background h-18 drop-shadow-lg", className)}>
             {navItems.map((item) => {
                 const isActive = item.isActive(currentPath)
 

@@ -7,10 +7,10 @@ export default function ProfileSummary(
 
     return (
         <Link className={"flex gap-2 items-center " + className} href={'/profile/' + userId}>
-            <p className="sm:text-base font-bold text-background">{username}</p>
             <Avatar>
                 <AvatarImage src={imgUrl} />
             </Avatar>
+            <p className="sm:text-base font-bold">{username}</p>
         </Link>
     )
 }

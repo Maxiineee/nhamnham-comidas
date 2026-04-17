@@ -11,7 +11,7 @@ export default function LayoutAuth({ children }: { children: React.ReactNode }) 
                 <Image src={imgCooking} fill priority alt="Background image of a cooking pan with ingredients" className="object-cover scale-[1.01] brightness-50 sm:blur-sm" />
                 <IconChefHat className="z-10 text-background/85 sm:hidden" width={80} height={80} />
             </div>
-            <Card className="z-10 w-full sm:max-w-lg">
+            <Card className="z-10 w-full sm:max-w-lg drop-shadow-lg">
                 <CardHeader className="flex flex-col gap-2">
                     <LogoHorizontal size="lg" />
                     <CardTitle className="text-lg font-bold text-card-foreground">Cook, share and discover flavors</CardTitle>

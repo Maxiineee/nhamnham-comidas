@@ -16,7 +16,7 @@ export default function SectionFridge() {
 
   function handleSelectIngredient(ingredient: string) {
     if (ingredient === "More") {
-      // teste
+      // Test 
       alert("Soon you'll be able to add more ingredients!")
       return;
     }

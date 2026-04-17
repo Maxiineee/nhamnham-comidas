@@ -4,8 +4,9 @@ import { z } from "zod";
 import { auth } from "@/lib/auth"
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
-export type authenticateState = {
+export type AuthenticateState = {
     errors?: {
         name?: string[],
         email?: string[],
@@ -14,13 +15,13 @@ export type authenticateState = {
         role?: string[],
         isBanned?: string[],
     }
-    message?: string | null
+    message?: string
 }
 
 export async function signup(
-    prevState: authenticateState,
+    prevState: AuthenticateState,
     formData: FormData,
-): Promise<authenticateState> {
+): Promise<AuthenticateState> {
     const signupSchema = z.object({
         name: z.string().min(3, "The username must be at least 3 characters long"),
         email: z.email("Invalid email format"),
@@ -42,8 +43,8 @@ export async function signup(
     })
 
     if (!parsedData.success) {
-        const errors: authenticateState["errors"] = parsedData.error.flatten().fieldErrors;
-        const message: authenticateState["message"] = "Missing or invalid fields. Please check.";
+        const errors: AuthenticateState["errors"] = parsedData.error.flatten().fieldErrors;
+        const message: AuthenticateState["message"] = "Missing or invalid fields. Please check.";
         return {
             errors,
             message,
@@ -56,45 +57,98 @@ export async function signup(
         }
     }
 
+    const finalData = {
+        body: {
+            ...parsedData.data,
+            callbackURL: "/"
+        }
+    }
+
     try {
-        await auth.api.signUpEmail({ body: parsedData.data });
+        await auth.api.signUpEmail(finalData);
     } catch (error) {
         console.log("Error during authentication: ", error);
         throw new Error("An error occurred while creating your account. Please try again.")
     }
-    return {}
+    revalidatePath("/") // Revalidate the home page to update the UI after sign in
+    redirect("/")
 }
 
-export async function login(
-    prevState: authenticateState,
+export async function signin(
+    prevState: AuthenticateState,
     formData: FormData,
-): Promise<authenticateState> {
-    const loginSchema = z.object({
-        email: z.email("Invalid email format"),
-        password: z.string()
+): Promise<AuthenticateState> {
+    const signinSchema = z.object({
+        email: z.email("Enter a valid e-mail"),
+        password: z.string().nonempty("Enter a password")
     })
 
-    const parsedData = loginSchema.safeParse({
+    const parsedData = signinSchema.safeParse({
         email: formData.get("emailInput"),
         password: formData.get("passwordInput"),
     })
 
     if (!parsedData.success) {
-        const errors: authenticateState["errors"] = parsedData.error.flatten().fieldErrors;
-        const message: authenticateState["message"] = "Missing or invalid fields. Please check.";
+        const errors: AuthenticateState["errors"] = parsedData?.error?.flatten().fieldErrors;
+        const message: AuthenticateState["message"] = "Missing or invalid fields. Please check.";
         return {
             errors,
             message,
         };
     }
 
+    const finalData = {
+        body: {
+            ...parsedData.data,
+            callbackURL: "/"
+        },
+        headers: await headers()
+    }
+
     try {
-        await auth.api.signInEmail({ body: parsedData.data, headers: await headers() });
+        await auth.api.signInEmail(finalData);
     } catch (error) {
         return {
             message: "Invalid email or password. Please try again."
         }
     }
-    revalidatePath("/") // Revalidate the home page to update the UI after login
+    revalidatePath("/") // Revalidate the home page to update the UI after sign in
+    redirect("/")
+}
+
+export async function signout() {
+    const finalData = {
+        headers: await headers()
+    }
+    try {
+        await auth.api.signOut(finalData);
+    } catch (error) {
+        console.log("Error during signout: ", error);
+        throw new Error("An error occurred while logging out. Please try again.")
+    }
+    revalidatePath("/") // Revalidate the home page to update the UI after signout
+}
+
+export async function signinSocial(): Promise<AuthenticateState> {
+    let urlToRedirect;
+    const finalData = {
+        body: {
+            provider: "google",
+            callbackURL: "/",
+            errorCallbackURL: "/signin"
+        }
+    }
+    try {
+        const { url } = await auth.api.signInSocial(finalData)
+        urlToRedirect = url;
+    } catch (error) {
+        console.log("Error during social sign in: ", error);
+        return {
+            message: "An error ocurred during your sign in. Please try again."
+        }
+    }
+
+    if (urlToRedirect) redirect(urlToRedirect)
+
     return {}
 }

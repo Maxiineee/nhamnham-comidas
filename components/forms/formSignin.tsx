@@ -1,30 +1,30 @@
 'use client'
 
+import { useActionState, useState } from "react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { AuthenticateState, signin, signinSocial } from "@/lib/actions"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group"
-import { IconMail, IconLockPassword, IconBrandGoogle } from '@tabler/icons-react'
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { useActionState, useState } from "react";
-import { authenticateState } from "@/lib/actions"
-import ButtonLink from "../button-link";
-import { login } from "@/lib/actions";
-import { useRouter } from "next/navigation";
+import ButtonLink from "@/components/button-link";
+import { IconMail, IconLockPassword, IconBrandGoogle } from '@tabler/icons-react'
 
-export default function FormLogin() {
-    const initialState: authenticateState = { message: null, errors: {} };
-    const [state, formAction, isPending] = useActionState(handleLogin, initialState)
-    const router = useRouter()
+export default function FormSignin() {
+    const initialState: AuthenticateState = { message: undefined, errors: {} };
+    const [state, formAction, isPending] = useActionState(signin, initialState)
 
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
 
-    async function handleLogin(prevState: authenticateState, formData: FormData): Promise<authenticateState> {
-        const data = await login(prevState, formData)
-        if (!data.errors && !data.message) {
-            router.push("/") // Redirect to home page after successful login
-        }
-        return data
+    const [socialSigninError, setSocialSigninError] = useState<{ message?: string }>({})
+    const searchParams = useSearchParams()
+    const signinError = searchParams.get("error")
+
+    async function handleSocialSignin() {
+        const data = await signinSocial()
+        if (!data?.message) return
+        setSocialSigninError(data)
     }
 
     return (
@@ -35,7 +35,7 @@ export default function FormLogin() {
                     <InputGroup>
                         <InputGroupInput id="emailInput" name="emailInput" placeholder="email@example.com" value={email} onChange={(e) => setEmail(e.target.value)} />
                         <InputGroupAddon align="inline-start">
-                            <IconMail className="text-muted-foreground" />
+                            <IconMail className="text-muted-foreground stroke-2" />
                         </InputGroupAddon>
                     </InputGroup>
                     {
@@ -52,7 +52,7 @@ export default function FormLogin() {
                     <InputGroup>
                         <InputGroupInput id="passwordInput" name="passwordInput" type="password" placeholder="********" value={password} onChange={(e) => setPassword(e.target.value)} />
                         <InputGroupAddon align="inline-start">
-                            <IconLockPassword className="text-muted-foreground" />
+                            <IconLockPassword className="text-muted-foreground stroke-2" />
                         </InputGroupAddon>
                     </InputGroup>
                     {
@@ -64,13 +64,14 @@ export default function FormLogin() {
                             </div>
                         )}
                 </Field>
-                {state.message && <div className="text-red-500 text-sm">{state.message}</div>}
+                {(state.message || socialSigninError.message) && <div className="text-red-500 text-sm">{state.message} {socialSigninError.message}</div>}
+                {(signinError === "access_denied") && <div className="text-red-500 text-sm">You have canceled your Google Sign in</div>}
                 <div className="w-full text-end">
                     <Link href='#' className="text-foreground">Forgot your password? <span className="text-primary">Click here</span></Link>
                 </div>
-                <Button className="hover:cursor-pointer" type="submit" disabled={isPending} >Login</Button>
-                <Button variant="outline" className="hover:cursor-pointer">
-                    <IconBrandGoogle data-icon="inline-start" />Login with Google
+                <Button className="hover:cursor-pointer" type="submit" disabled={isPending} >Sign in</Button>
+                <Button variant="outline" className="hover:cursor-pointer" onClick={handleSocialSignin}>
+                    <IconBrandGoogle className="size-5" />Sign in with Google
                 </Button>
                 <div className="w-full text-center">
                     <Link href='/signup' className="text-foreground">Don't have an account? <span className="text-primary">Sign up!</span></Link>

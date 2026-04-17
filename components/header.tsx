@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 import { SidebarTrigger } from "./ui/sidebar"
 import { IconShoppingBag } from "@tabler/icons-react"
 import InputSearch from "./input-search"
@@ -8,7 +8,7 @@ import LogoHorizontal from "./logo-horizontal"
 import { cn } from "@/lib/utils"
 import ButtonLink from "./button-link"
 import { Button } from "./ui/button"
-import { logout } from "@/lib/client-actions"
+import { signout } from "@/lib/actions"
 
 function HeaderLeftSide() {
     return (
@@ -21,12 +21,12 @@ function HeaderLeftSide() {
 function HeaderRightSide({ session }: { session: any }) {
     const router = useRouter()
 
-    const handleLogout = async () => {
+    const handleSignout = async () => {
         try {
-            await logout()
-            router.refresh() // Refresh the page to update the UI after logout
+            await signout()
+            router.refresh() // Refresh the page to update the UI after signout
         } catch (error) {
-            console.error("Logout failed:", error)
+            console.error("Signout failed: ", error)
         }
     }
 
@@ -35,10 +35,10 @@ function HeaderRightSide({ session }: { session: any }) {
             {/** Check if user is authenticated to conditionally show register buttons */}
             {!session ? (
                 <>
-                    <ButtonLink href="/login">Login</ButtonLink>
-                    <ButtonLink href="/signup" variant="outline">Signup</ButtonLink>
+                    <ButtonLink href="/signin">Sign in</ButtonLink>
+                    <ButtonLink href="/signup" variant="outline">Sign up</ButtonLink>
                 </>) : (
-                <Button className="w-18" variant="outline" onClick={handleLogout}>Logout</Button>
+                <Button className="w-18" variant="outline" onClick={handleSignout}>Sign out</Button>
             )}
             <IconShoppingBag className="size-8" />
         </div>
@@ -46,9 +46,18 @@ function HeaderRightSide({ session }: { session: any }) {
 }
 
 function HeaderCenter() {
+    const pathname = usePathname()
+    let search = false;
+    let filters = false;
+    switch (pathname) {
+        case "/":
+            search = true;
+            filters = true;
+            break;
+    }
     return (
         <div className="flex flex-1">
-            <InputSearch filters />
+            {search && <InputSearch filters={filters} />}
         </div>
     )
 }

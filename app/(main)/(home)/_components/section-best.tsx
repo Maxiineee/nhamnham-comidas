@@ -1,5 +1,5 @@
 import Link from "next/link"
-import TogglesCategory from "@/components/toggles-categories"
+import TogglesCategory from "@/app/(main)/(home)/_components/toggles-categories"
 import CardsRecipesBest from "@/app/(main)/(home)/_components/cards-recipes-best"
 
 export default function SectionDestaques({ currentCategory }: { currentCategory?: string }) {

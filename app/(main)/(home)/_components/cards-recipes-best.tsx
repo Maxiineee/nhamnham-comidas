@@ -20,10 +20,10 @@ function getCardRecipeVisibility(index: number) {
 
 export default async function CardsRecipesBest({ currentCategory }: { currentCategory?: string }) {
     const category = currentCategory || undefined;
-    const receitasDestaques = await getBest(category);
+    const data = await getBest(category);
     return (
-        receitasDestaques.map((item, index) => (
-            <CardRecipe key={index} data={item} className={cn("w-full max-w-lg max-h-96 aspect-4/3", getCardRecipeVisibility(index))} />
+        data.map((item, index) => (
+            <CardRecipe key={index} id={item.id} title={item.title} imgUrl={item.imgUrl} categories={item.categories} liked={item.liked} saved={item.saved} avgRating={item.avgRating} author={item.author} className={cn("w-full max-w-lg max-h-96 aspect-4/3", getCardRecipeVisibility(index))}  />
         ))
     )
 

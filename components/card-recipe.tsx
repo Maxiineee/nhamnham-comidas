@@ -1,68 +1,56 @@
-import { IconBookmarkFilled, IconStarFilled } from "@tabler/icons-react";
 import { Badge } from "./ui/badge";
 import { Card, CardContent, CardHeader } from "./ui/card";
 import ProfileSummary from "./profile-summary";
 import { cn } from "@/lib/utils";
+import ButtonIconSave from "./button-icon-save";
+import ButtonIconReview from "./button-icon-review";
+import Link from "next/link";
 
-const iconClasses = {
-    default: "size-8 text-background",
-    active: "size-8 text-primary"
-}
-
-function BadgesCategories({ categories }: { categories: string[] }) {
+export function BadgesCategories({ categories, className }: { categories: string[], className?: string }) {
     return (
         categories.map((item, index) => (
-            <Badge variant="outline" key={index}>{item}</Badge>
+            <Badge variant="outline" key={index} className={className}>{item}</Badge>
         ))
     )
 }
 
-function CardActions({ liked, saved, media }: { liked?: boolean, saved?: boolean, media: number }) {
+function CardActions({ id, liked, saved, avgRating }: { id: string, liked: boolean, saved: boolean, avgRating: number }) {
     return (
-        <div className="flex gap-4">
-            <div className="flex items-center gap-2">
-                <IconStarFilled className={liked ? iconClasses.active : iconClasses.default} />
-                <p className="text-base font-bold text-background">{media}</p>
-            </div>
-            <IconBookmarkFilled className={saved ? iconClasses.active : iconClasses.default} />
+        <div className="flex items-center">
+            <ButtonIconReview id={id} avgRating={avgRating} liked={liked} variant="short" className="pe-2 drop-shadow-lg" />
+            <ButtonIconSave id={id} saved={saved} className="ps-3 drop-shadow-lg" />
         </div>
     )
 }
 
-export type CardRecipeData = {
-    id: string;
-    imgUrl: string;
-    media: number;
-    title: string;
-    categories: string[];
-    reviewed: boolean;
-    saved: boolean;
+export default function CardRecipe({ id, title, imgUrl, categories, liked, saved, avgRating, author, className }: {
+    className?: string, id: string, title: string, imgUrl: string, categories: string[], liked: boolean, saved: boolean, avgRating: number,
     author: {
-        id: string;
-        name: string;
-        imgUrl: string;
-    };
-}
+        id: string,
+        name: string,
+        imgUrl: string,
+    } 
+}) {
 
-export default function CardRecipe({ data, className }: { data: CardRecipeData, className?: string }) {
     return (
-        <Card className={cn("flex flex-col justify-between p-3 sm:p-4", className)}
+        <Card className={cn("flex flex-col justify-between p-3 sm:p-4 drop-shadow-lg", className)}
             style={{
-                backgroundImage: `url(${data.imgUrl})`,
+                backgroundImage: `url(${imgUrl})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center'
             }}
         >
-            <CardHeader className="flex gap-2 p-0">
-                <BadgesCategories categories={data.categories} />
+            <CardHeader className="flex gap-2 p-0 drop-shadow-lg">
+                <BadgesCategories categories={categories} />
             </CardHeader>
             <CardContent className="p-0">
-                <h2 className="w-1/2 text-xl sm:text-2xl font-bold text-background">{data.title}</h2>
+                <h2 className="w-1/2 text-xl sm:text-2xl font-bold text-background drop-shadow-lg">{title}</h2>
                 <div className="flex w-full justify-between">
-                    <CardActions liked={data.reviewed} saved={data.saved} media={data.media} />
-                    <ProfileSummary userId={data.author.id} username={data.author.name} imgUrl={data.author.imgUrl} />
+                    <CardActions id={id} liked={liked} saved={saved} avgRating={avgRating} />
+                    <ProfileSummary userId={author.id} username={author.name} imgUrl={author.imgUrl} className="text-background flex-row-reverse drop-shadow-lg" />
                 </div>
             </CardContent>
+            <Link href={`/recipe/${id}`} className="absolute inset-0 mb-15"/>
         </Card>
     )
 }
